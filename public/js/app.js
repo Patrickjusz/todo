@@ -2189,6 +2189,8 @@ $taskDescription = $("#task-description");
 $errorsWrapper = $("#task-edit-errors");
 $btnSave = $("#btn-save");
 $editModal = $("#editModal");
+$formControl = $(".form-control");
+$searchInput = $("#search-input");
 taskClassName = "task-priority";
 
 var Task = /*#__PURE__*/function () {
@@ -2407,7 +2409,8 @@ var Task = /*#__PURE__*/function () {
       $('input:radio[name="' + taskClassName + '"]').prop("checked", false);
       $($btnSave).data("id", 0);
       $($btnSave).data("action", "");
-      $(".form-control").removeClass("is-invalid");
+      $($formControl).removeClass("is-invalid");
+      $($searchInput).val("");
     }
   }, {
     key: "add",

@@ -1,6 +1,20 @@
 body {
-    margin-top: 40px;
-    background: #eee;
+    margin-top: 70px;
+    // background: #eee;
+
+    background: #0f2027; /* fallback for old browsers */
+    background: -webkit-linear-gradient(
+        to right,
+        #2c5364,
+        #203a43,
+        #0f2027
+    ); /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(
+        to right,
+        #2c5364,
+        #203a43,
+        #0f2027
+    ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 .page-todo {
     .tasks {
@@ -11,7 +25,7 @@ body {
         border-radius: 15px !important;
     }
     .task-list {
-        padding: 30px 15px;
+        padding: 30px 50px;
         height: 100%;
     }
     .graph {
@@ -340,7 +354,15 @@ body {
 }
 
 @media only screen and (max-width: 767px) {
+    body {
+        margin-top: 30px;
+    }
+
     .page-todo {
+        .task-list {
+            padding: 15px 20px;
+        }
+
         .tasks {
             position: relative;
             margin: 0 !important;
@@ -498,4 +520,9 @@ body {
 
 .hide {
     display: none !important;
+}
+
+#btn-clear {
+    opacity: 0.5;
+    border-radius: 10px;
 }

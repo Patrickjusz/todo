@@ -1,5 +1,10 @@
 $renderTasksWrapper = $("#render-tasks-wrapper");
 $tashTitle = $("#task-title");
+$taskDescription = $("#task-description");
+$errorsWrapper = $("#task-edit-errors");
+$btnSave = $("#btn-save");
+$editModal = $("#editModal");
+taskClassName = "task-priority";
 
 class Task {
     // config
@@ -133,7 +138,10 @@ class Task {
                     headers: this.httpHeaders,
                     async: false,
                 })
-                    .done()
+                    .done(function () {
+                        var audio = new Audio("media/trash.mp3");
+                        audio.play();
+                    })
                     .fail(function (data) {
                         //
                     });
@@ -144,10 +152,10 @@ class Task {
     }
 
     editTask(id) {
-        $("#task-edit-errors").hide();
+        $($errorsWrapper).hide();
         this.clearForm();
-        $("#btn-save").data("id", id);
-        $("#btn-save").data("action", "edit");
+        $($btnSave).data("id", id);
+        $($btnSave).data("action", "edit");
 
         $.ajax({
             method: "GET",
@@ -157,14 +165,14 @@ class Task {
         })
             .done(function (data) {
                 $($tashTitle).val(data.title);
-                $("#task-description").val(data.description);
+                $($taskDescription).val(data.description);
 
-                $('input:radio[name="task-priority"]')
+                $('input:radio[name="' + taskClassName + '"]')
                     .filter('[value="' + data.priority + '"]')
                     .prop("checked", true);
 
                 console.log(data.priority);
-                $("#exampleModalCenter").modal("show");
+                $($editModal).modal("show");
             })
             .fail(function (data) {
                 //
@@ -196,24 +204,29 @@ class Task {
         return errors;
     }
 
+    hideErrors() {
+        $($errorsWrapper).hide();
+        $($errorsWrapper).text("");
+    }
+
     clearForm() {
-        $("#task-edit-errors").hide();
+        this.hideErrors();
         $($tashTitle).val("");
-        $("#task-description").val("");
-        $('input:radio[name="task-priority"]').prop("checked", false);
-        $("#btn-save").data("id", 0);
-        $("#btn-save").data("action", "");
+        $($taskDescription).val("");
+        $('input:radio[name="' + taskClassName + '"]').prop("checked", false);
+        $($btnSave).data("id", 0);
+        $($btnSave).data("action", "");
     }
 
     add() {
         this.clearForm();
-        $("#btn-save").data("action", "add");
-        $("#exampleModalCenter").modal("show");
+        $($btnSave).data("action", "add");
+        $($editModal).modal("show");
     }
 
     save() {
-        let id = $("#btn-save").data("id");
-        let action = $("#btn-save").data("action");
+        let id = $($btnSave).data("id");
+        let action = $($btnSave).data("action");
         let httpMethod;
 
         if (this.allowedSaveAction.indexOf(action) != -1) {
@@ -224,19 +237,19 @@ class Task {
             }
 
             let title = $($tashTitle).val();
-            let description = $("#task-description").val();
-            let priority = $("input[name=task-priority]:checked").val();
+            let description = $($taskDescription).val();
+            let priority = $("input[name=" + taskClassName + "]:checked").val();
 
             let errors = this.validateEditInputs(title, description, priority);
 
             if (errors.length > 0) {
-                $("#task-edit-errors").text("");
+                this.hideErrors();
                 $(errors).each(function (index, message) {
-                    $("#task-edit-errors").append(message + "<br>");
-                    $("#task-edit-errors").show();
+                    $($errorsWrapper).append(message + "<br>");
+                    $($errorsWrapper).show();
                 });
             } else {
-                $("#task-edit-errors").hide();
+                this.hideErrors();
                 $.ajax({
                     method: httpMethod,
                     url: this.apiUrl,
@@ -251,8 +264,8 @@ class Task {
                 })
                     .done(function (data) {
                         $($tashTitle).val("");
-                        $("#task-description").val("");
-                        $("#exampleModalCenter").modal("hide");
+                        $($taskDescription).val("");
+                        $($editModal).modal("hide");
                     })
                     .fail(function (data) {
                         //

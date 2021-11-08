@@ -13,7 +13,7 @@
             <div class="task-list">
                 <div class="row">
                     <div class="col-8">
-                        <h2 class="logo"><a href="{{ route('task.index') }}">Tasks</a> <button id="btn-add" class="btn rounded btn-success ">Add</button>
+                        <h2 class="logo">Tasks <button id="btn-add" class="btn rounded btn-success ">Add</button>
                         </h2>
                     </div>
 

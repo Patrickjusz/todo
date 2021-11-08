@@ -21,9 +21,16 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 //API PROTECTION
 Route::middleware(['auth.apikey'])->group(function () {
-    Route::get('tasks', function () {
-        $tasks = Task::where('state', 'active')->orderBy('priority')->get();
-        return response()->json($tasks, 200);
+    Route::get('tasks', function (Request $request) {
+        $searchValue = $request->input('search') ?? '';
+        $tasks = Task::where('state', '!=', 'delete')->orderBy('priority')->orderByDesc('id');
+
+        if ($searchValue) {
+            $searchValue = '%' . $searchValue . '%';
+            $tasks->where('title', 'like',  $searchValue);
+        }
+
+        return response()->json($tasks->get(), 200);
     });
 
     Route::get('tasks/{id}', function ($id) {
@@ -31,16 +38,33 @@ Route::middleware(['auth.apikey'])->group(function () {
         return response()->json($tasks, 200);
     });
 
-    Route::put('tasks', function () {
-        //
-    });
+    Route::put('tasks', function (Request $request) {
+        $requestValues = $request->all();
+        if ($requestValues['state'] == 'true') {
+            $requestValues['state'] = 'done';
+        } else if ($requestValues['state'] == 'false') {
+            $requestValues['state'] = 'active';
+        }
 
-    Route::delete('tasks/{id}', function ($id) {
-        $state = Task::findOrFail($id)->update(['state' => 'done']);
+        $state = Task::findOrFail($request->input('id'))->update($requestValues);
         return response()->json($state, 200);
     });
 
-    Route::post('tasks', function () {
-        //
+    Route::post('tasks', function (Request $request) {
+        $state = Task::create($request->all());
+        return response()->json($state, 200);
+    });
+
+    Route::delete('tasks', function (Request $request) {
+        $isAll = $request->input('all');
+        if ($isAll) {
+            $state = Task::where("state", "done")->update(['state' => 'delete']);
+        }
+        return response()->json($state, 200);
+    });
+
+    Route::delete('tasks/{id}', function ($id) {
+        $state = Task::findOrFail($id)->update(['state' => 'delete']);
+        return response()->json($state, 200);
     });
 });

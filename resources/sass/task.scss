@@ -478,3 +478,24 @@ body {
     background-color: #4dbd74;
     border-color: #4dbd74;
 }
+
+.priority-edit-badge {
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+    min-width: 155px;
+}
+
+#btn-add {
+    border-radius: 50%;
+    background-color: #4dbd74;
+    border-color: #4dbd74;
+}
+
+.done {
+    text-decoration: line-through;
+    opacity: 0.2;
+}
+
+.hide {
+    display: none !important;
+}

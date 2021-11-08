@@ -2119,18 +2119,53 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
   \********************************/
 /***/ (() => {
 
-$btnReload = $("#btn-reload");
+$btnClear = $("#btn-clear");
+$btnSave = $("#btn-save");
+$btnAdd = $("#btn-add");
 btnActionSelector = ".btn-action";
-$($btnReload).click(function () {
-  task.reloadTasks();
+$($btnClear).click(function () {
+  task.clearEndedTasks();
 });
 $(document).on("click", btnActionSelector, function (ev) {
   var id = $(this).data("id");
+  var action = $(this).data("action");
 
   if (id > 0) {
-    task.deleteTask(id);
+    if (action == "delete") {
+      task.deleteTask(id);
+    } else if (action == "edit") {
+      task.editTask(id);
+    }
   }
 });
+$(document).on("click", ".checkbox-done", function () {
+  task.updateState(this);
+});
+$($btnSave).click(function () {
+  task.save(this);
+});
+$($btnAdd).click(function () {
+  task.add(this);
+});
+
+function delay(callback, ms) {
+  var timer = 0;
+  return function () {
+    var context = this,
+        args = arguments;
+    clearTimeout(timer);
+    timer = setTimeout(function () {
+      callback.apply(context, args);
+    }, ms || 0);
+  };
+} // Example usage:
+
+
+$("#search-input").keyup(delay(function (e) {
+  console.log("Time elapsed!", this.value);
+  var searchValue = this.value;
+  task.reloadTasks(searchValue);
+}, 400));
 
 /***/ }),
 
@@ -2149,6 +2184,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 $renderTasksWrapper = $("#render-tasks-wrapper");
+$tashTitle = $("#task-title");
 
 var Task = /*#__PURE__*/function () {
   function Task() {
@@ -2161,16 +2197,25 @@ var Task = /*#__PURE__*/function () {
     });
 
     _defineProperty(this, "data", {});
+
+    _defineProperty(this, "allowedSaveAction", ["add", "edit"]);
   }
 
   _createClass(Task, [{
     key: "reloadTasks",
     value: //Method
-    function reloadTasks() {
+    function reloadTasks(search) {
+      if (search != "undefined") {
+        data = {
+          search: search
+        };
+      }
+
       $.ajax({
         method: "GET",
         url: this.apiUrl,
-        headers: this.httpHeaders
+        headers: this.httpHeaders,
+        data: data
       }).done(function (data) {
         var html = "";
         var priority = 0;
@@ -2179,7 +2224,10 @@ var Task = /*#__PURE__*/function () {
             id: task.id,
             title: task.title,
             description: task.description,
-            priority: task.priority
+            priority: task.priority,
+            special_css_class: task.state == "done" ? "done" : "",
+            checked: task.state == "done" ? "checked" : "",
+            time_area: task.state == "done" ? "hide" : ""
           };
 
           if (priority != task.priority) {
@@ -2190,15 +2238,79 @@ var Task = /*#__PURE__*/function () {
           html = html + handlebarsTemplateItem(injectData);
         });
         $($renderTasksWrapper).empty();
-        $($renderTasksWrapper).append(html);
+
+        if (html) {
+          $($renderTasksWrapper).append(html);
+        } else {
+          $($renderTasksWrapper).append("<div class='alert alert-warning'>Task not found!</div>");
+        }
+
         console.log("Reload tasks...");
+      }).fail(function (data) {//
+      });
+    }
+  }, {
+    key: "clearEndedTasks",
+    value: function clearEndedTasks() {
+      var _this = this;
+
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#4dbd74",
+        cancelButtonColor: "#D0211C",
+        confirmButtonText: "Yes, clear it!"
+      }).then(function (result) {
+        if (result.isConfirmed) {
+          $.ajax({
+            method: "DELETE",
+            url: _this.apiUrl,
+            headers: _this.httpHeaders,
+            async: false,
+            data: {
+              all: 1
+            }
+          }).done().fail(function (data) {//
+          });
+
+          _this.reloadTasks();
+        }
+      });
+    }
+  }, {
+    key: "updateState",
+    value: function updateState(btn) {
+      var isChecked = $(btn).is(":checked") ? true : false;
+      var id = $(btn).data("id");
+      data = {
+        id: id,
+        state: isChecked
+      };
+
+      if (isChecked) {
+        $(".desc-" + id).addClass("done");
+        $(".time-" + id).addClass("hide");
+      } else {
+        $(".desc-" + id).removeClass("done");
+        $(".time-" + id).removeClass("hide");
+      }
+
+      $.ajax({
+        method: "PUT",
+        url: this.apiUrl,
+        headers: this.httpHeaders,
+        data: data,
+        async: false
+      }).done(function (data, ev) {//
       }).fail(function (data) {//
       });
     }
   }, {
     key: "deleteTask",
     value: function deleteTask(id) {
-      var _this = this;
+      var _this2 = this;
 
       Swal.fire({
         title: "Are you sure?",
@@ -2212,14 +2324,129 @@ var Task = /*#__PURE__*/function () {
         if (result.isConfirmed) {
           $.ajax({
             method: "DELETE",
-            url: _this.apiUrl + "/" + id,
-            headers: _this.httpHeaders
-          }).done(_this.reloadTasks()).fail(function (data) {//
+            url: _this2.apiUrl + "/" + id,
+            headers: _this2.httpHeaders,
+            async: false
+          }).done().fail(function (data) {//
           });
 
-          _this.reloadTasks();
+          _this2.reloadTasks();
         }
       });
+    }
+  }, {
+    key: "editTask",
+    value: function editTask(id) {
+      $("#task-edit-errors").hide();
+      this.clearForm();
+      $("#btn-save").data("id", id);
+      $("#btn-save").data("action", "edit");
+      $.ajax({
+        method: "GET",
+        url: this.apiUrl + "/" + id,
+        headers: this.httpHeaders,
+        async: true
+      }).done(function (data) {
+        $($tashTitle).val(data.title);
+        $("#task-description").val(data.description);
+        $('input:radio[name="task-priority"]').filter('[value="' + data.priority + '"]').prop("checked", true);
+        console.log(data.priority);
+        $("#exampleModalCenter").modal("show");
+      }).fail(function (data) {//
+      });
+    }
+  }, {
+    key: "validateEditInputs",
+    value: function validateEditInputs(title, description, priority) {
+      var errors = [];
+
+      if (title.length == "") {
+        errors.push("The name is required!");
+      }
+
+      if (title.length > 255) {
+        errors.push("The name is too long !");
+      }
+
+      if (description.length > 1024) {
+        errors.push("The description is to long!");
+      }
+
+      if (!priority) {
+        errors.push("The priority is required!");
+      }
+
+      if (priority <= 0 || priority > 3) {
+        errors.push("Bad priority value!");
+      }
+
+      return errors;
+    }
+  }, {
+    key: "clearForm",
+    value: function clearForm() {
+      $("#task-edit-errors").hide();
+      $($tashTitle).val("");
+      $("#task-description").val("");
+      $('input:radio[name="task-priority"]').prop("checked", false);
+      $("#btn-save").data("id", 0);
+      $("#btn-save").data("action", "");
+    }
+  }, {
+    key: "add",
+    value: function add() {
+      this.clearForm();
+      $("#btn-save").data("action", "add");
+      $("#exampleModalCenter").modal("show");
+    }
+  }, {
+    key: "save",
+    value: function save() {
+      var id = $("#btn-save").data("id");
+      var action = $("#btn-save").data("action");
+      var httpMethod;
+
+      if (this.allowedSaveAction.indexOf(action) != -1) {
+        if (action == "edit") {
+          httpMethod = "PUT";
+        } else if (action == "add") {
+          httpMethod = "POST";
+        }
+
+        var title = $($tashTitle).val();
+        var description = $("#task-description").val();
+        var priority = $("input[name=task-priority]:checked").val();
+        var errors = this.validateEditInputs(title, description, priority);
+
+        if (errors.length > 0) {
+          $("#task-edit-errors").text("");
+          $(errors).each(function (index, message) {
+            $("#task-edit-errors").append(message + "<br>");
+            $("#task-edit-errors").show();
+          });
+        } else {
+          $("#task-edit-errors").hide();
+          $.ajax({
+            method: httpMethod,
+            url: this.apiUrl,
+            headers: this.httpHeaders,
+            data: {
+              id: id,
+              title: title,
+              description: description,
+              priority: priority
+            },
+            async: false
+          }).done(function (data) {
+            $($tashTitle).val("");
+            $("#task-description").val("");
+            $("#exampleModalCenter").modal("hide");
+          }).fail(function (data) {//
+          });
+          this.reloadTasks();
+          this.clearForm();
+        }
+      }
     }
   }]);
 
@@ -2229,7 +2456,7 @@ var Task = /*#__PURE__*/function () {
 task = new Task();
 task.reloadTasks(); // setInterval(function () {
 //     task.reloadTasks();
-// }, 10000);
+// }, 3000);
 // Swal.fire("Good job!", "You clicked the button!", "success");
 
 /***/ }),

@@ -3,6 +3,7 @@
 use App\Models\Task;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Requests\StoreTaskRequest;
 
 /*
 |--------------------------------------------------------------------------
@@ -52,7 +53,7 @@ Route::middleware(['auth.apikey'])->group(function () {
         return response()->json($state, 200);
     });
 
-    Route::post('tasks', function (Request $request) {
+    Route::post('tasks', function (StoreTaskRequest $request) {
         $state = Task::create($request->all());
         return response()->json($state, 200);
     });

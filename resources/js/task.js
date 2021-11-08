@@ -1,3 +1,5 @@
+const { default: Swal } = require("sweetalert2");
+
 $renderTasksWrapper = $("#render-tasks-wrapper");
 $tashTitle = $("#task-title");
 $taskDescription = $("#task-description");
@@ -183,11 +185,11 @@ class Task {
 
     validateEditInputs(title, description, priority) {
         let errors = [];
-        $(".form-control").removeClass("is-invalid");
+        $($formControl).removeClass("is-invalid");
 
         if (title.length == "") {
             errors.push("The name is required!");
-            $("#task-title").addClass("is-invalid");
+            $($tashTitle).addClass("is-invalid");
         }
 
         if (title.length > 255) {
@@ -223,7 +225,7 @@ class Task {
         $($btnSave).data("action", "");
         $($formControl).removeClass("is-invalid");
         $($searchInput).val("");
-        $($btnSave).prop('disabled', false);
+        $($btnSave).prop("disabled", false);
     }
 
     add() {
@@ -258,7 +260,9 @@ class Task {
                 });
             } else {
                 this.hideErrors();
-                $($btnSave).prop('disabled', true);
+                $($btnSave).prop("disabled", true);
+
+                var thisClass = this;
                 $.ajax({
                     method: httpMethod,
                     url: this.apiUrl,
@@ -272,16 +276,25 @@ class Task {
                     async: false,
                 })
                     .done(function (data) {
-                        $($tashTitle).val("");
-                        $($taskDescription).val("");
+                        thisClass.reloadTasks();
                         $($editModal).modal("hide");
+                        thisClass.clearForm();
                     })
                     .fail(function (data) {
-                        //
-                    });
+                        let errors = [];
+                        $(data.responseJSON.errors).each(function (
+                            index,
+                            element
+                        ) {
+                            var unkownKey = Object.keys(element)[0];
+                            errors.push(element[unkownKey][0]);
+                        });
 
-                this.reloadTasks();
-                this.clearForm();
+                        Swal.fire("Problem!", errors[0], "error");
+                    })
+                    .always(function () {
+                        $($btnSave).removeAttr("disabled");
+                    });
             }
         }
     }
@@ -289,9 +302,3 @@ class Task {
 
 task = new Task();
 task.reloadTasks();
-
-// setInterval(function () {
-//     task.reloadTasks();
-// }, 3000);
-
-// Swal.fire("Good job!", "You clicked the button!", "success");

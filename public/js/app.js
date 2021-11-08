@@ -2173,7 +2173,7 @@ function delay(callback, ms) {
 /*!******************************!*\
   !*** ./resources/js/task.js ***!
   \******************************/
-/***/ (() => {
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -2182,6 +2182,9 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var _require = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js"),
+    Swal = _require["default"];
 
 $renderTasksWrapper = $("#render-tasks-wrapper");
 $tashTitle = $("#task-title");
@@ -2369,11 +2372,11 @@ var Task = /*#__PURE__*/function () {
     key: "validateEditInputs",
     value: function validateEditInputs(title, description, priority) {
       var errors = [];
-      $(".form-control").removeClass("is-invalid");
+      $($formControl).removeClass("is-invalid");
 
       if (title.length == "") {
         errors.push("The name is required!");
-        $("#task-title").addClass("is-invalid");
+        $($tashTitle).addClass("is-invalid");
       }
 
       if (title.length > 255) {
@@ -2411,7 +2414,7 @@ var Task = /*#__PURE__*/function () {
       $($btnSave).data("action", "");
       $($formControl).removeClass("is-invalid");
       $($searchInput).val("");
-      $($btnSave).prop('disabled', false);
+      $($btnSave).prop("disabled", false);
     }
   }, {
     key: "add",
@@ -2447,7 +2450,8 @@ var Task = /*#__PURE__*/function () {
           });
         } else {
           this.hideErrors();
-          $($btnSave).prop('disabled', true);
+          $($btnSave).prop("disabled", true);
+          var thisClass = this;
           $.ajax({
             method: httpMethod,
             url: this.apiUrl,
@@ -2460,13 +2464,19 @@ var Task = /*#__PURE__*/function () {
             },
             async: false
           }).done(function (data) {
-            $($tashTitle).val("");
-            $($taskDescription).val("");
+            thisClass.reloadTasks();
             $($editModal).modal("hide");
-          }).fail(function (data) {//
+            thisClass.clearForm();
+          }).fail(function (data) {
+            var errors = [];
+            $(data.responseJSON.errors).each(function (index, element) {
+              var unkownKey = Object.keys(element)[0];
+              errors.push(element[unkownKey][0]);
+            });
+            Swal.fire("Problem!", errors[0], "error");
+          }).always(function () {
+            $($btnSave).removeAttr("disabled");
           });
-          this.reloadTasks();
-          this.clearForm();
         }
       }
     }
@@ -2476,10 +2486,7 @@ var Task = /*#__PURE__*/function () {
 }();
 
 task = new Task();
-task.reloadTasks(); // setInterval(function () {
-//     task.reloadTasks();
-// }, 3000);
-// Swal.fire("Good job!", "You clicked the button!", "success");
+task.reloadTasks();
 
 /***/ }),
 

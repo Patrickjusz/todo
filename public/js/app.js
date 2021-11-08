@@ -2205,8 +2205,8 @@ var Task = /*#__PURE__*/function () {
         text: "You won't be able to revert this!",
         icon: "warning",
         showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
+        confirmButtonColor: "#4dbd74",
+        cancelButtonColor: "#D0211C",
         confirmButtonText: "Yes, delete it!"
       }).then(function (result) {
         if (result.isConfirmed) {

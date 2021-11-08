@@ -10508,3 +10508,8 @@ body {
   opacity: 0.5;
   border-radius: 10px;
 }
+
+#btn-save:disabled, #btn-save[disabled] {
+  background-color: silver !important;
+  opacity: 0.7 !important;
+}

@@ -223,6 +223,7 @@ class Task {
         $($btnSave).data("action", "");
         $($formControl).removeClass("is-invalid");
         $($searchInput).val("");
+        $($btnSave).prop('disabled', false);
     }
 
     add() {
@@ -257,6 +258,7 @@ class Task {
                 });
             } else {
                 this.hideErrors();
+                $($btnSave).prop('disabled', true);
                 $.ajax({
                     method: httpMethod,
                     url: this.apiUrl,

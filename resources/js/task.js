@@ -228,6 +228,11 @@ class Task {
         $($btnSave).prop("disabled", false);
     }
 
+    hideModalAndClearData() {
+        this.clearForm();
+        $($editModal).modal("hide");
+    }
+
     add() {
         this.clearForm();
         $($btnSave).data("action", "add");

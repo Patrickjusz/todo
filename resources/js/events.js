@@ -2,6 +2,7 @@ $btnClear = $("#btn-clear");
 $btnSave = $("#btn-save");
 $btnAdd = $("#btn-add");
 $btnSearch = $("#search-input");
+$closeModal = $(".close-modal");
 btnActionSelector = ".btn-action";
 checkboxDoneSelector = ".checkbox-done";
 
@@ -15,6 +16,10 @@ $($btnSave).click(function () {
 
 $($btnAdd).click(function () {
     task.add(this);
+});
+
+$($closeModal).click(function () {
+    task.hideModalAndClearData();
 });
 
 $(document).on("click", checkboxDoneSelector, function () {
@@ -33,7 +38,6 @@ $(document).on("click", btnActionSelector, function (ev) {
         }
     }
 });
-
 
 $($btnSearch).keyup(
     delay(function (e) {

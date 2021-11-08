@@ -34,6 +34,7 @@ $(document).on("click", btnActionSelector, function (ev) {
     }
 });
 
+
 $($btnSearch).keyup(
     delay(function (e) {
         console.log("Time up!", this.value);

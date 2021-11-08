@@ -2228,7 +2228,7 @@ var Task = /*#__PURE__*/function () {
           var injectData = {
             id: task.id,
             title: task.title,
-            description: task.description,
+            description: task.description ? task.description : "-",
             priority: task.priority,
             special_css_class: task.state == "done" ? "done" : "",
             checked: task.state == "done" ? "checked" : "",
@@ -2367,9 +2367,11 @@ var Task = /*#__PURE__*/function () {
     key: "validateEditInputs",
     value: function validateEditInputs(title, description, priority) {
       var errors = [];
+      $(".form-control").removeClass("is-invalid");
 
       if (title.length == "") {
         errors.push("The name is required!");
+        $("#task-title").addClass("is-invalid");
       }
 
       if (title.length > 255) {
@@ -2405,6 +2407,7 @@ var Task = /*#__PURE__*/function () {
       $('input:radio[name="' + taskClassName + '"]').prop("checked", false);
       $($btnSave).data("id", 0);
       $($btnSave).data("action", "");
+      $(".form-control").removeClass("is-invalid");
     }
   }, {
     key: "add",

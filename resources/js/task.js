@@ -33,7 +33,7 @@ class Task {
                     let injectData = {
                         id: task.id,
                         title: task.title,
-                        description: task.description,
+                        description: task.description ? task.description : "-",
                         priority: task.priority,
                         special_css_class: task.state == "done" ? "done" : "",
                         checked: task.state == "done" ? "checked" : "",
@@ -181,8 +181,11 @@ class Task {
 
     validateEditInputs(title, description, priority) {
         let errors = [];
+        $(".form-control").removeClass("is-invalid");
+
         if (title.length == "") {
             errors.push("The name is required!");
+            $("#task-title").addClass("is-invalid");
         }
 
         if (title.length > 255) {
@@ -216,6 +219,7 @@ class Task {
         $('input:radio[name="' + taskClassName + '"]').prop("checked", false);
         $($btnSave).data("id", 0);
         $($btnSave).data("action", "");
+        $(".form-control").removeClass("is-invalid");
     }
 
     add() {

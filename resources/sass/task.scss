@@ -28,8 +28,9 @@ body {
         }
     }
 
-    .priority.high {
-        background: #fffdfd;
+    .priority.high,
+    .priority-1 {
+        // background: #fffdfd;
         margin-bottom: 1px;
         span {
             background: #dc3545;
@@ -37,10 +38,13 @@ body {
             color: #fff;
             display: inline-block;
             font-size: 12px;
+            border-top-right-radius: 5px;
+            border-bottom-right-radius: 5px;
         }
     }
-    .priority.medium {
-        background: #fff0ab;
+    .priority.medium,
+    .priority-2 {
+        // background: #fff0ab;
         margin-bottom: 1px;
         span {
             background: #f8cb00;
@@ -48,10 +52,13 @@ body {
             color: #fff;
             display: inline-block;
             font-size: 12px;
+            border-top-right-radius: 5px;
+            border-bottom-right-radius: 5px;
         }
     }
-    .priority.low {
-        background: #cfedda;
+    .priority.low,
+    .priority-3 {
+        // background: #cfedda;
         margin-bottom: 1px;
         span {
             background: #198754;
@@ -59,6 +66,8 @@ body {
             color: #fff;
             display: inline-block;
             font-size: 12px;
+            border-top-right-radius: 5px;
+            border-bottom-right-radius: 5px;
         }
     }
     .task {
@@ -94,13 +103,16 @@ body {
     .task.last {
         border-bottom: 1px solid transparent;
     }
-    .task.high {
+    .task.high,
+    .task-1 {
         border-left: 2px solid #f86c6b;
     }
-    .task.medium {
+    .task.medium,
+    .task-2 {
         border-left: 2px solid #f8cb00;
     }
-    .task.low {
+    .task.low,
+    .task-3 {
         border-left: 2px solid #4dbd74;
     }
     .timeline {

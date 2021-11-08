@@ -10,6 +10,9 @@
         @yield('content')
     </div>
 
+    <script>
+        @yield('js')
+    </script>
     @include('layouts.js')
 </body>
 

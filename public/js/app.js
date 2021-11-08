@@ -2124,8 +2124,18 @@ $btnSave = $("#btn-save");
 $btnAdd = $("#btn-add");
 $btnSearch = $("#search-input");
 btnActionSelector = ".btn-action";
+checkboxDoneSelector = ".checkbox-done";
 $($btnClear).click(function () {
   task.clearEndedTasks();
+});
+$($btnSave).click(function () {
+  task.save(this);
+});
+$($btnAdd).click(function () {
+  task.add(this);
+});
+$(document).on("click", checkboxDoneSelector, function () {
+  task.updateState(this);
 });
 $(document).on("click", btnActionSelector, function (ev) {
   var id = $(this).data("id");
@@ -2139,15 +2149,11 @@ $(document).on("click", btnActionSelector, function (ev) {
     }
   }
 });
-$(document).on("click", ".checkbox-done", function () {
-  task.updateState(this);
-});
-$($btnSave).click(function () {
-  task.save(this);
-});
-$($btnAdd).click(function () {
-  task.add(this);
-});
+$($btnSearch).keyup(delay(function (e) {
+  console.log("Time up!", this.value);
+  var searchValue = this.value;
+  task.reloadTasks(searchValue);
+}, 400));
 
 function delay(callback, ms) {
   var timer = 0;
@@ -2159,14 +2165,7 @@ function delay(callback, ms) {
       callback.apply(context, args);
     }, ms || 0);
   };
-} // Example usage:
-
-
-$($btnSearch).keyup(delay(function (e) {
-  console.log("Time elapsed!", this.value);
-  var searchValue = this.value;
-  task.reloadTasks(searchValue);
-}, 400));
+}
 
 /***/ }),
 

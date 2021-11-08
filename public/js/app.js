@@ -2280,6 +2280,12 @@ var Task = /*#__PURE__*/function () {
       });
     }
   }, {
+    key: "playSound",
+    value: function playSound(path) {
+      var audio = new Audio(path);
+      audio.play();
+    }
+  }, {
     key: "clearEndedTasks",
     value: function clearEndedTasks() {
       var _this = this;
@@ -2304,6 +2310,7 @@ var Task = /*#__PURE__*/function () {
               all: 1
             }
           }).done(function (data) {
+            classThis.playSound("media/clear.mp3");
             classThis.reloadTasks();
           }).fail(function (data) {//
           });
@@ -2329,6 +2336,7 @@ var Task = /*#__PURE__*/function () {
         $(".time-" + id).removeClass("hide");
       }
 
+      var classThis = this;
       $.ajax({
         method: "PUT",
         url: this.apiUrl,
@@ -2342,8 +2350,7 @@ var Task = /*#__PURE__*/function () {
           audioPath = "media/uncheck.mp3";
         }
 
-        var audio = new Audio(audioPath);
-        audio.play();
+        classThis.playSound(audioPath);
       }).fail(function (data) {//
       }).always(function () {
         $(btn).prop("disabled", false);
@@ -2372,8 +2379,7 @@ var Task = /*#__PURE__*/function () {
             headers: _this2.httpHeaders,
             async: false
           }).done(function () {
-            var audio = new Audio("media/trash.mp3");
-            audio.play();
+            classThis.playSound("media/trash.mp3");
             classThis.reloadTasks("", "animate__bounceIn");
           }).fail(function (data) {//
           });
@@ -2460,7 +2466,9 @@ var Task = /*#__PURE__*/function () {
     value: function add() {
       this.clearForm();
       $($btnSave).data("action", "add");
-      $($editModal).modal("show");
+      $(function () {
+        $($editModal).modal("show");
+      });
     }
   }, {
     key: "save",
@@ -2524,8 +2532,10 @@ var Task = /*#__PURE__*/function () {
   return Task;
 }();
 
-task = new Task();
-task.reloadTasks();
+$(document).ready(function () {
+  task = new Task();
+  task.reloadTasks();
+});
 
 /***/ }),
 

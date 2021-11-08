@@ -80,6 +80,11 @@ class Task {
             });
     }
 
+    playSound(path) {
+        let audio = new Audio(path);
+        audio.play();
+    }
+
     clearEndedTasks() {
         var classThis = this;
         Swal.fire({
@@ -100,6 +105,7 @@ class Task {
                     data: { all: 1 },
                 })
                     .done(function (data) {
+                        classThis.playSound("media/clear.mp3");
                         classThis.reloadTasks();
                     })
                     .fail(function (data) {
@@ -124,6 +130,7 @@ class Task {
             $(".time-" + id).removeClass("hide");
         }
 
+        var classThis = this;
         $.ajax({
             method: "PUT",
             url: this.apiUrl,
@@ -138,8 +145,7 @@ class Task {
                     audioPath = "media/uncheck.mp3";
                 }
 
-                var audio = new Audio(audioPath);
-                audio.play();
+                classThis.playSound(audioPath);
             })
             .fail(function (data) {
                 //
@@ -168,8 +174,7 @@ class Task {
                     async: false,
                 })
                     .done(function () {
-                        var audio = new Audio("media/trash.mp3");
-                        audio.play();
+                        classThis.playSound("media/trash.mp3");
                         classThis.reloadTasks("", "animate__bounceIn");
                     })
                     .fail(function (data) {
@@ -260,7 +265,9 @@ class Task {
     add() {
         this.clearForm();
         $($btnSave).data("action", "add");
-        $($editModal).modal("show");
+        $(function () {
+            $($editModal).modal("show");
+        });
     }
 
     save() {
@@ -329,5 +336,7 @@ class Task {
     }
 }
 
-task = new Task();
-task.reloadTasks();
+$(document).ready(function () {
+    task = new Task();
+    task.reloadTasks();
+});

@@ -1,6 +1,7 @@
 $btnClear = $("#btn-clear");
 $btnSave = $("#btn-save");
 $btnAdd = $("#btn-add");
+$btnSearch = $("#search-input");
 btnActionSelector = ".btn-action";
 
 $($btnClear).click(function () {
@@ -46,7 +47,7 @@ function delay(callback, ms) {
 
 // Example usage:
 
-$("#search-input").keyup(
+$($btnSearch).keyup(
     delay(function (e) {
         console.log("Time elapsed!", this.value);
         let searchValue = this.value;

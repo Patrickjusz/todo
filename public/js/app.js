@@ -2122,6 +2122,7 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 $btnClear = $("#btn-clear");
 $btnSave = $("#btn-save");
 $btnAdd = $("#btn-add");
+$btnSearch = $("#search-input");
 btnActionSelector = ".btn-action";
 $($btnClear).click(function () {
   task.clearEndedTasks();
@@ -2161,7 +2162,7 @@ function delay(callback, ms) {
 } // Example usage:
 
 
-$("#search-input").keyup(delay(function (e) {
+$($btnSearch).keyup(delay(function (e) {
   console.log("Time elapsed!", this.value);
   var searchValue = this.value;
   task.reloadTasks(searchValue);

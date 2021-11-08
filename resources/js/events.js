@@ -43,7 +43,11 @@ $($btnSearch).keyup(
     delay(function (e) {
         console.log("Time up!", this.value);
         let searchValue = this.value;
-        task.reloadTasks(searchValue);
+        if (searchValue) {
+            task.reloadTasks(searchValue, "animate__jackInTheBox");
+        } else {
+            task.reloadTasks();
+        }
     }, 400)
 );
 

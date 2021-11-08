@@ -1,5 +1,5 @@
 body {
-    margin-top: 70px;
+    margin-top: 50px;
     background: #0f2027;
     background: -webkit-linear-gradient(to right, #2c5364, #203a43, #0f2027);
     background: linear-gradient(to right, #2c5364, #203a43, #0f2027);
@@ -13,6 +13,12 @@ body {
         border-radius: 15px !important;
     }
     .task-list {
+        .input-group-text {
+            color: #fefefe;
+            background-color: #2c5364;
+            border: 1px solid #ced4da;
+        }
+
         padding: 30px 50px;
         height: 100%;
         .logo {
@@ -374,12 +380,21 @@ body {
     font-size: 1.1rem;
     margin-bottom: 12px;
     min-width: 155px;
+    border-radius: 0px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
 }
 #btn-add {
     border-radius: 50%;
-    background-color: #4dbd74;
-    border-color: #4dbd74;
+    background-color: #2c5364;
+    border-color: #2b5262;
 }
+
+#btn-add:hover {
+    background-color: #192f38;
+    border-color: #192f38;
+}
+
 .done {
     text-decoration: line-through;
     opacity: 0.2;

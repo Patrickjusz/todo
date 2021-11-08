@@ -18,10 +18,21 @@ class Task {
     allowedSaveAction = ["add", "edit"];
 
     //Method
-    reloadTasks(search) {
-        if (search != "undefined") {
+    reloadTasks(search, animationName) {
+        var animation;
+        var data = {};
+
+        if (search != undefined && search != "") {
             data = { search: search };
         }
+
+        if (animationName != undefined && animationName != "") {
+            animation = animationName;
+        } else {
+            animation = "animate__fadeIn";
+        }
+
+        console.log("Animation: " + animation);
 
         $.ajax({
             method: "GET",
@@ -42,6 +53,7 @@ class Task {
                         special_css_class: task.state == "done" ? "done" : "",
                         checked: task.state == "done" ? "checked" : "",
                         time_area: task.state == "done" ? "hide" : "",
+                        animation: animation,
                     };
 
                     if (priority != task.priority) {
@@ -69,6 +81,7 @@ class Task {
     }
 
     clearEndedTasks() {
+        var classThis = this;
         Swal.fire({
             title: "Are you sure?",
             text: "You won't be able to revert this!",
@@ -86,17 +99,18 @@ class Task {
                     async: false,
                     data: { all: 1 },
                 })
-                    .done()
+                    .done(function (data) {
+                        classThis.reloadTasks();
+                    })
                     .fail(function (data) {
                         //
                     });
-
-                this.reloadTasks();
             }
         });
     }
 
     updateState(btn) {
+        $(btn).prop("disabled", true);
         let isChecked = $(btn).is(":checked") ? true : false;
         let id = $(btn).data("id");
 
@@ -118,10 +132,20 @@ class Task {
             async: false,
         })
             .done(function (data, ev) {
-                //
+                if (isChecked) {
+                    audioPath = "media/check.mp3";
+                } else {
+                    audioPath = "media/uncheck.mp3";
+                }
+
+                var audio = new Audio(audioPath);
+                audio.play();
             })
             .fail(function (data) {
                 //
+            })
+            .always(function () {
+                $(btn).prop("disabled", false);
             });
     }
 
@@ -135,6 +159,7 @@ class Task {
             cancelButtonColor: "#D0211C",
             confirmButtonText: "Yes, delete it!",
         }).then((result) => {
+            let classThis = this;
             if (result.isConfirmed) {
                 $.ajax({
                     method: "DELETE",
@@ -145,12 +170,11 @@ class Task {
                     .done(function () {
                         var audio = new Audio("media/trash.mp3");
                         audio.play();
+                        classThis.reloadTasks("", "animate__bounceIn");
                     })
                     .fail(function (data) {
                         //
                     });
-
-                this.reloadTasks();
             }
         });
     }
@@ -267,7 +291,7 @@ class Task {
                 this.hideErrors();
                 $($btnSave).prop("disabled", true);
 
-                var thisClass = this;
+                var classThis = this;
                 $.ajax({
                     method: httpMethod,
                     url: this.apiUrl,
@@ -281,9 +305,9 @@ class Task {
                     async: false,
                 })
                     .done(function (data) {
-                        thisClass.reloadTasks();
+                        classThis.reloadTasks();
                         $($editModal).modal("hide");
-                        thisClass.clearForm();
+                        classThis.clearForm();
                     })
                     .fail(function (data) {
                         let errors = [];

@@ -1,4 +1,4 @@
-<div class="task task-@{{priority}} animate__animated animate__fadeIn">\
+<div class="task task-id-@{{id}} task-@{{priority}} animate__animated @{{animation}}">\
     {{-- animate__animated animate__bounceIn --}}\
     <div class="round">\
         <input class="checkbox-done" type="checkbox" id="checkbox-@{{id}}" data-id="@{{id}}" @{{checked}}>\

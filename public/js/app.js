@@ -2123,6 +2123,7 @@ $btnClear = $("#btn-clear");
 $btnSave = $("#btn-save");
 $btnAdd = $("#btn-add");
 $btnSearch = $("#search-input");
+$closeModal = $(".close-modal");
 btnActionSelector = ".btn-action";
 checkboxDoneSelector = ".checkbox-done";
 $($btnClear).click(function () {
@@ -2133,6 +2134,9 @@ $($btnSave).click(function () {
 });
 $($btnAdd).click(function () {
   task.add(this);
+});
+$($closeModal).click(function () {
+  task.hideModalAndClearData();
 });
 $(document).on("click", checkboxDoneSelector, function () {
   task.updateState(this);
@@ -2152,7 +2156,12 @@ $(document).on("click", btnActionSelector, function (ev) {
 $($btnSearch).keyup(delay(function (e) {
   console.log("Time up!", this.value);
   var searchValue = this.value;
-  task.reloadTasks(searchValue);
+
+  if (searchValue) {
+    task.reloadTasks(searchValue, "animate__jackInTheBox");
+  } else {
+    task.reloadTasks();
+  }
 }, 400));
 
 function delay(callback, ms) {
@@ -2214,13 +2223,23 @@ var Task = /*#__PURE__*/function () {
   _createClass(Task, [{
     key: "reloadTasks",
     value: //Method
-    function reloadTasks(search) {
-      if (search != "undefined") {
+    function reloadTasks(search, animationName) {
+      var animation;
+      var data = {};
+
+      if (search != undefined && search != "") {
         data = {
           search: search
         };
       }
 
+      if (animationName != undefined && animationName != "") {
+        animation = animationName;
+      } else {
+        animation = "animate__fadeIn";
+      }
+
+      console.log("Animation: " + animation);
       $.ajax({
         method: "GET",
         url: this.apiUrl,
@@ -2237,7 +2256,8 @@ var Task = /*#__PURE__*/function () {
             priority: task.priority,
             special_css_class: task.state == "done" ? "done" : "",
             checked: task.state == "done" ? "checked" : "",
-            time_area: task.state == "done" ? "hide" : ""
+            time_area: task.state == "done" ? "hide" : "",
+            animation: animation
           };
 
           if (priority != task.priority) {
@@ -2264,6 +2284,7 @@ var Task = /*#__PURE__*/function () {
     value: function clearEndedTasks() {
       var _this = this;
 
+      var classThis = this;
       Swal.fire({
         title: "Are you sure?",
         text: "You won't be able to revert this!",
@@ -2282,16 +2303,17 @@ var Task = /*#__PURE__*/function () {
             data: {
               all: 1
             }
-          }).done().fail(function (data) {//
+          }).done(function (data) {
+            classThis.reloadTasks();
+          }).fail(function (data) {//
           });
-
-          _this.reloadTasks();
         }
       });
     }
   }, {
     key: "updateState",
     value: function updateState(btn) {
+      $(btn).prop("disabled", true);
       var isChecked = $(btn).is(":checked") ? true : false;
       var id = $(btn).data("id");
       data = {
@@ -2313,8 +2335,18 @@ var Task = /*#__PURE__*/function () {
         headers: this.httpHeaders,
         data: data,
         async: false
-      }).done(function (data, ev) {//
+      }).done(function (data, ev) {
+        if (isChecked) {
+          audioPath = "media/check.mp3";
+        } else {
+          audioPath = "media/uncheck.mp3";
+        }
+
+        var audio = new Audio(audioPath);
+        audio.play();
       }).fail(function (data) {//
+      }).always(function () {
+        $(btn).prop("disabled", false);
       });
     }
   }, {
@@ -2331,6 +2363,8 @@ var Task = /*#__PURE__*/function () {
         cancelButtonColor: "#D0211C",
         confirmButtonText: "Yes, delete it!"
       }).then(function (result) {
+        var classThis = _this2;
+
         if (result.isConfirmed) {
           $.ajax({
             method: "DELETE",
@@ -2340,10 +2374,9 @@ var Task = /*#__PURE__*/function () {
           }).done(function () {
             var audio = new Audio("media/trash.mp3");
             audio.play();
+            classThis.reloadTasks("", "animate__bounceIn");
           }).fail(function (data) {//
           });
-
-          _this2.reloadTasks();
         }
       });
     }
@@ -2417,6 +2450,12 @@ var Task = /*#__PURE__*/function () {
       $($btnSave).prop("disabled", false);
     }
   }, {
+    key: "hideModalAndClearData",
+    value: function hideModalAndClearData() {
+      this.clearForm();
+      $($editModal).modal("hide");
+    }
+  }, {
     key: "add",
     value: function add() {
       this.clearForm();
@@ -2451,7 +2490,7 @@ var Task = /*#__PURE__*/function () {
         } else {
           this.hideErrors();
           $($btnSave).prop("disabled", true);
-          var thisClass = this;
+          var classThis = this;
           $.ajax({
             method: httpMethod,
             url: this.apiUrl,
@@ -2464,9 +2503,9 @@ var Task = /*#__PURE__*/function () {
             },
             async: false
           }).done(function (data) {
-            thisClass.reloadTasks();
+            classThis.reloadTasks();
             $($editModal).modal("hide");
-            thisClass.clearForm();
+            classThis.clearForm();
           }).fail(function (data) {
             var errors = [];
             $(data.responseJSON.errors).each(function (index, element) {

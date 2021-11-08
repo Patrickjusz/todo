@@ -6,6 +6,7 @@
 </head>
 
 <body>
+    
     <div class="container page-todo">
         @yield('content')
     </div>

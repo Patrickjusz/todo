@@ -3,13 +3,18 @@
 @section('content')
 
     <div class="margin-wrapper animate__animated animate__fadeIn">
+        <div style="    display: block;
+                position: relative;
+                margin-bottom: 50px;">
+            <h1 class="logo"><a style="color:#fff" href="{{ route('task.index') }}"><i
+                        class="fas fa-tasks"></i> Todo</a></h1>
+        </div>
         <div class="col-sm-12 tasks">
             <div class="task-list">
                 <div class="row">
                     <div class="col-8">
-                        <h1 class="logo"><a href="{{ route('task.index') }}"><i class="fas fa-tasks"></i> Todo</a> <button id="btn-add"
-                                class="btn rounded btn-success ">Add</button>
-                        </h1>
+                        <h2 class="logo"><a href="{{ route('task.index') }}">Tasks</a> <button id="btn-add" class="btn rounded btn-success ">Add</button>
+                        </h2>
                     </div>
 
                     <div class="col-4">

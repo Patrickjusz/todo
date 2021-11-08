@@ -40,10 +40,12 @@ Route::middleware(['auth.apikey'])->group(function () {
 
     Route::put('tasks', function (Request $request) {
         $requestValues = $request->all();
-        if ($requestValues['state'] == 'true') {
-            $requestValues['state'] = 'done';
-        } else if ($requestValues['state'] == 'false') {
-            $requestValues['state'] = 'active';
+        if (!empty($requestValues['state'])) {
+            if ($requestValues['state'] == 'true') {
+                $requestValues['state'] = 'done';
+            } else if ($requestValues['state'] == 'false') {
+                $requestValues['state'] = 'active';
+            }
         }
 
         $state = Task::findOrFail($request->input('id'))->update($requestValues);

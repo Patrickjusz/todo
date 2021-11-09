@@ -1,12 +1,14 @@
+@section('page_title', 'Application')
+@section('page_description', 'Example todo APP description...')
+@section('page_keywords', 'task manager, to do app')
+
 @extends('layouts.app')
 
 @section('content')
 
     <div class="margin-wrapper animate__animated animate__fadeIn">
-        <div style="    display: block;
-                position: relative;
-                margin-bottom: 50px;">
-            <h1 class="logo"><a style="color:#fff" href="{{ route('task.index') }}"><i
+        <div class="logo-wrapper">
+            <h1 class="logo"><a href="{{ route('task.index') }}"><i
                         class="fas fa-tasks"></i> Todo</a></h1>
         </div>
         <div class="col-sm-12 tasks">

@@ -1,5 +1,3 @@
-const { default: Swal } = require("sweetalert2");
-
 $renderTasksWrapper = $("#render-tasks-wrapper");
 $tashTitle = $("#task-title");
 $taskDescription = $("#task-description");
@@ -72,6 +70,7 @@ class Task {
                 if (html) {
                     $($renderTasksWrapper).append(html);
                 } else {
+                    // @TODO move to blade component
                     $($renderTasksWrapper).append(
                         "<div class='alert alert-warning'>Task not found!</div>"
                     );

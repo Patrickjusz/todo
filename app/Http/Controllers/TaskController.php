@@ -15,7 +15,6 @@ class TaskController extends Controller
      */
     public function index(): View
     {
-        $tasks = Task::where('state', 'active')->orderBy('priority')->get();
-        return view('task.index', ['tasks' => $tasks]);
+        return view('task.index');
     }
 }

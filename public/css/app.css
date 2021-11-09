@@ -10602,4 +10602,12 @@ body {
   .task .time {
     width: 35%;
   }
+
+  .logo {
+    margin-bottom: 15px !important;
+  }
+
+  .search-wrapper {
+    margin-bottom: 20px;
+  }
 }

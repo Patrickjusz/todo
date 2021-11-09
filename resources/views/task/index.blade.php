@@ -12,12 +12,12 @@
         <div class="col-sm-12 tasks">
             <div class="task-list">
                 <div class="row">
-                    <div class="col-8">
+                    <div class="col-sm-12 col-md-7 col-lg-8">
                         <h2 class="logo">Tasks <button id="btn-add" class="btn rounded btn-success ">Add</button>
                         </h2>
                     </div>
 
-                    <div class="col-4">
+                    <div class="col-sm-12 col-md-5 col-lg-4 search-wrapper">
                         <div class="input-group rounded">
                             <input id="search-input" type="search" class="form-control rounded" placeholder="Search..."
                                 aria-label="Search" aria-describedby="search-addon" />

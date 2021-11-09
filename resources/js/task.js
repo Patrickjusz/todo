@@ -10,7 +10,7 @@ taskClassName = "task-priority";
 
 class Task {
     // config
-    apiUrl = "/api/tasks";
+    apiUrl = "api/tasks";
     httpHeaders = { "X-Authorization": API_KEY };
     data = {};
     allowedSaveAction = ["add", "edit"];

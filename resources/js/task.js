@@ -34,6 +34,7 @@ class Task {
 
         console.log("Animation: " + animation);
 
+        var classThis = this;
         $.ajax({
             method: "GET",
             url: this.apiUrl,
@@ -45,14 +46,16 @@ class Task {
                 let priority = 0;
 
                 $(data).each(function (index, task) {
+                    let isDone = task.state == "done";
+
                     let injectData = {
                         id: task.id,
                         title: task.title,
                         description: task.description ? task.description : "-",
                         priority: task.priority,
-                        special_css_class: task.state == "done" ? "done" : "",
-                        checked: task.state == "done" ? "checked" : "",
-                        time_area: task.state == "done" ? "hide" : "",
+                        special_css_class: isDone ? "done" : "",
+                        checked: isDone ? "checked" : "",
+                        time_area: isDone ? "hide" : "",
                         animation: animation,
                     };
 
@@ -77,12 +80,26 @@ class Task {
             })
             .fail(function (data) {
                 //
+            })
+            .always(function () {
+                classThis.fireDoneBtnEvent();
             });
+    }
+
+    fireDoneBtnEvent() {
+        $doneCssClass = $(".done");
+        $btnClear = $("#btn-clear");
+        if ($($doneCssClass).length > 0) {
+            $($btnClear).show();
+        } else {
+            $($btnClear).hide();
+        }
     }
 
     playSound(path) {
         let audio = new Audio(path);
         audio.play();
+        this.fireDoneBtnEvent();
     }
 
     clearEndedTasks() {
@@ -110,6 +127,9 @@ class Task {
                     })
                     .fail(function (data) {
                         //
+                    })
+                    .always(function () {
+                        classThis.fireDoneBtnEvent();
                     });
             }
         });

@@ -2240,6 +2240,7 @@ var Task = /*#__PURE__*/function () {
       }
 
       console.log("Animation: " + animation);
+      var classThis = this;
       $.ajax({
         method: "GET",
         url: this.apiUrl,
@@ -2249,14 +2250,15 @@ var Task = /*#__PURE__*/function () {
         var html = "";
         var priority = 0;
         $(data).each(function (index, task) {
+          var isDone = task.state == "done";
           var injectData = {
             id: task.id,
             title: task.title,
             description: task.description ? task.description : "-",
             priority: task.priority,
-            special_css_class: task.state == "done" ? "done" : "",
-            checked: task.state == "done" ? "checked" : "",
-            time_area: task.state == "done" ? "hide" : "",
+            special_css_class: isDone ? "done" : "",
+            checked: isDone ? "checked" : "",
+            time_area: isDone ? "hide" : "",
             animation: animation
           };
 
@@ -2277,13 +2279,28 @@ var Task = /*#__PURE__*/function () {
 
         console.log("Reload tasks...");
       }).fail(function (data) {//
+      }).always(function () {
+        classThis.fireDoneBtnEvent();
       });
+    }
+  }, {
+    key: "fireDoneBtnEvent",
+    value: function fireDoneBtnEvent() {
+      $doneCssClass = $(".done");
+      $btnClear = $("#btn-clear");
+
+      if ($($doneCssClass).length > 0) {
+        $($btnClear).show();
+      } else {
+        $($btnClear).hide();
+      }
     }
   }, {
     key: "playSound",
     value: function playSound(path) {
       var audio = new Audio(path);
       audio.play();
+      this.fireDoneBtnEvent();
     }
   }, {
     key: "clearEndedTasks",
@@ -2313,6 +2330,8 @@ var Task = /*#__PURE__*/function () {
             classThis.playSound("media/clear.mp3");
             classThis.reloadTasks();
           }).fail(function (data) {//
+          }).always(function () {
+            classThis.fireDoneBtnEvent();
           });
         }
       });

@@ -121,7 +121,7 @@ class Task {
                     data: { all: 1 },
                 })
                     .done(function (data) {
-                        classThis.playSound("media/clear.mp3");
+                        classThis.playSound("media/audio/clear.mp3");
                         classThis.reloadTasks();
                     })
                     .fail(function (data) {
@@ -159,9 +159,9 @@ class Task {
         })
             .done(function (data, ev) {
                 if (isChecked) {
-                    audioPath = "media/check.mp3";
+                    audioPath = "media/audio/check.mp3";
                 } else {
-                    audioPath = "media/uncheck.mp3";
+                    audioPath = "media/audio/uncheck.mp3";
                 }
 
                 classThis.playSound(audioPath);
@@ -193,7 +193,7 @@ class Task {
                     async: false,
                 })
                     .done(function () {
-                        classThis.playSound("media/trash.mp3");
+                        classThis.playSound("media/audio/trash.mp3");
                         classThis.reloadTasks("", "animate__bounceIn");
                     })
                     .fail(function (data) {

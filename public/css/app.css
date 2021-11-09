@@ -10473,6 +10473,10 @@ body {
     font-size: 16px;
     margin-bottom: 5px;
   }
+
+  .margin-wrapper {
+    padding: 5% 5% !important;
+  }
 }
 @media only screen and (min-width: 768px) and (max-width: 991px) {
   .page-todo .task {
@@ -10518,6 +10522,10 @@ body {
   .page-todo .timeslot .task span span.remaining {
     font-size: 12px;
   }
+
+  .margin-wrapper {
+    padding: 5% 5% !important;
+  }
 }
 @media only screen and (max-width: 767px) {
   body {
@@ -10540,7 +10548,7 @@ body {
   }
   .page-todo .task .desc {
     display: inline-block;
-    width: 65%;
+    width: 60%;
     padding: 10px 10px;
     font-size: 10px;
     margin-right: -20px;
@@ -10552,7 +10560,7 @@ body {
   .page-todo .task .time {
     display: inline-block;
     float: right;
-    width: 25%;
+    width: 30%;
     padding: 10px 10px;
     font-size: 10px;
     text-align: right;
@@ -10582,5 +10590,16 @@ body {
 
   .margin-wrapper {
     padding: 0px 0px !important;
+  }
+}
+@media only screen and (max-width: 767px) {
+  .task {
+    margin-bottom: 1px;
+  }
+  .task .desc {
+    width: 55%;
+  }
+  .task .time {
+    width: 35%;
   }
 }
